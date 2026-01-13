@@ -356,7 +356,7 @@ def load_training_features():
     feature_file_status = {}
     
     try:
-        feature_data['price_features'] = pd.read_csv('train_price_data.csv')
+        feature_data['price_features'] = pd.read_csv('app/train_price_data.csv')
         # Remove target column to get just features
         if 'price' in feature_data['price_features'].columns:
             feature_data['price_features'] = feature_data['price_features'].drop(columns=['price'])
@@ -365,7 +365,7 @@ def load_training_features():
         feature_file_status['price_features'] = f'❌ Error: {str(e)[:50]}'
     
     try:
-        feature_data['occupancy_features'] = pd.read_csv('train_occupancy_data.csv')
+        feature_data['occupancy_features'] = pd.read_csv('app/train_occupancy_data.csv')
         # Remove target column to get just features  
         if 'occupancy' in feature_data['occupancy_features'].columns:
             feature_data['occupancy_features'] = feature_data['occupancy_features'].drop(columns=['occupancy'])
@@ -410,7 +410,7 @@ def load_models():
 
     # --- Price model loading ---
         # --- Price model loading ---
-    file_path = "price_prediction_model_v2.pkl"  # Explicit file name
+    file_path = "app/price_prediction_model_v2.pkl"  # Explicit file name
 
     if os.path.exists(file_path):
         try:
@@ -430,7 +430,7 @@ def load_models():
 
 
     # --- Occupancy model loading ---
-    occ_files = glob.glob("occupancy_xgb_pipeline_final.*")
+    occ_files = glob.glob("app/occupancy_xgb_pipeline_final.*")
     if not occ_files:
         occ_files = glob.glob("*.pkl") + glob.glob("*.joblib")  # fallback search
     
@@ -485,13 +485,13 @@ def load_data():
     file_status = {}
     
     try:
-        data['neighborhood'] = pd.read_csv('neighborhood_data_with_clusters.csv')
+        data['neighborhood'] = pd.read_csv('app/neighborhood_data_with_clusters.csv')
         file_status['neighborhood'] = 'âœ… Loaded'
     except Exception as e:
         file_status['neighborhood'] = f'âŒ Error: {str(e)[:30]}'
     
     try:
-        data['listings'] = pd.read_csv('merged_df.csv')
+        data['listings'] = pd.read_csv('app/merged_df.csv')
         if 'room_type_x' in data['listings'].columns:
             data['listings'] = data['listings'].rename(columns={'room_type_x': 'room_type'})
         file_status['listings'] = 'âœ… Loaded'
@@ -499,19 +499,19 @@ def load_data():
         file_status['listings'] = f'âŒ Error: {str(e)[:30]}'
     
     try:
-        data['kmeans'] = joblib.load('kmeans_model.joblib')
-        data['scaler'] = joblib.load('kmeans_scaler.joblib')
+        data['kmeans'] = joblib.load('app/kmeans_model.joblib')
+        data['scaler'] = joblib.load('app/kmeans_scaler.joblib')
         file_status['clustering'] = 'âœ… Loaded'
     except:
         try:
-            data['kmeans'] = pickle.load(open('kmeans_model.pkl', 'rb'))
-            data['scaler'] = pickle.load(open('kmeans_scaler.pkl', 'rb'))
+            data['kmeans'] = pickle.load(open('app/kmeans_model.pkl', 'rb'))
+            data['scaler'] = pickle.load(open('app/kmeans_scaler.pkl', 'rb'))
             file_status['clustering'] = 'âœ… Loaded (pickle)'
         except Exception as e:
             file_status['clustering'] = f'âŒ Error: {str(e)[:30]}'
     
     try:
-        with open('cluster_map.html', 'r', encoding='utf-8') as f:
+        with open('app/cluster_map.html', 'r', encoding='utf-8') as f:
             data['map_html'] = f.read()
         file_status['map'] = 'âœ… Loaded'
     except Exception as e:
@@ -923,7 +923,7 @@ with tab3:
             st.metric("Total Listings", f"{total_listings:,}")
         
         with col3:
-            avg_rating = data['listings']['review_scores_rating'].mean() if 'review_scores_rating' in data['listings'].columns else 0
+            avg_rating = data['listings']['avg_rating'].mean() if 'avg_rating' in data['listings'].columns else 0
             st.metric("Average Rating", f"{avg_rating:.1f}/5")
         
         with col4:
